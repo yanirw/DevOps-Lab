@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: monitoring-appset
+  name: monitoring-test-appset
   namespace: argocd
 spec:
   generators:
@@ -9,13 +9,13 @@ spec:
       elements:
       - clusterName: gcp-cluster
         environment: dev
-        namespace: monitoring
+        namespace: monitoring-test  # Different namespace for testing
         gitRef: your-feature-branch-name
   template:
     metadata:
       labels:
         domain: monitoring-umbrella
-      name: monitoring-{{environment}}
+      name: monitoring-test-{{environment}}
     spec:
       project: monitoring
       destination:
@@ -35,4 +35,4 @@ spec:
           prune: true
           selfHeal: true
         syncOptions:
-        - CreateNamespace=true
+        - CreateNamespace=true 
