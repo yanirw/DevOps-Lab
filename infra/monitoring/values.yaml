@@ -2,6 +2,11 @@ env: {}
 
 kube-prometheus-stack:
   enabled: true
+  crds:
+    enabled: true
+  prometheusOperator:
+    createCustomResource: true
+    installCRDs: true
   
   # Common Labels
   commonLabels:

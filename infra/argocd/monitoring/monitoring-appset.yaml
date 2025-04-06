@@ -28,7 +28,7 @@ spec:
           valueFiles:
           - env/{{environment}}-values.yaml
         path: infra/monitoring
-        repoURL: 'https://github.com/yanirw/guitarnetes2.0'
+        repoURL: 'https://github.com/yanirw/DevOps-Lab'
         targetRevision: '{{gitRef}}'
       syncPolicy:
         automated:
@@ -36,3 +36,6 @@ spec:
           selfHeal: true
         syncOptions:
         - CreateNamespace=true
+        - ServerSideApply=true
+        - Replace=true
+        - CreateCustomResource=true
