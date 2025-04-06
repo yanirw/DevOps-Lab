@@ -10,7 +10,7 @@ spec:
       - clusterName: gcp-cluster
         environment: dev
         namespace: monitoring
-        gitRef: your-feature-branch-name
+        gitRef: HEAD
   template:
     metadata:
       labels:

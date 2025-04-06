@@ -9,8 +9,8 @@ spec:
       elements:
       - clusterName: gcp-cluster
         environment: dev
-        namespace: monitoring-test  # Different namespace for testing
-        gitRef: your-feature-branch-name
+        namespace: monitoring-test
+        gitRef: feat/monitoring
   template:
     metadata:
       labels:
@@ -28,7 +28,7 @@ spec:
           valueFiles:
           - env/{{environment}}-values.yaml
         path: infra/monitoring
-        repoURL: 'https://github.com/yanirw/guitarnetes2.0'
+        repoURL: 'https://github.com/yanirw/DevOps-Lab'
         targetRevision: '{{gitRef}}'
       syncPolicy:
         automated:
