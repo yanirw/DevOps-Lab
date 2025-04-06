@@ -1,10 +1,10 @@
-gitRepoUrl: 'https://github.com/yanirw/guitarnetes2.0'
+gitRepoUrl: 'https://github.com/yanirw/DevOps-Lab'
 
 projects:
   monitoring:
     description: "Monitoring project for Prometheus and Grafana stack"
     sourceRepos:
-      - 'https://github.com/yanirw/guitarnetes2.0'
+      - 'https://github.com/yanirw/DevOps-Lab'
       - 'https://prometheus-community.github.io/helm-charts'
     destinations:
       - namespace: monitoring
@@ -28,7 +28,7 @@ projects:
   secrets:
     description: "Project for managing external secrets"
     sourceRepos:
-      - 'https://github.com/yanirw/guitarnetes2.0'
+      - 'https://github.com/yanirw/DevOps-Lab'
     destinations:
       - namespace: external-secrets
         server: https://kubernetes.default.svc

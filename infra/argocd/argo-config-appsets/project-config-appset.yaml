@@ -16,8 +16,8 @@ spec:
     spec:
       project: default
       source:
-        repoURL: 'https://github.com/yanirw/guitarnetes2.0'
-        targetRevision: feat/monitoring
+        repoURL: 'https://github.com/yanirw/DevOps-Lab'
+        targetRevision: HEAD
         path: infra/argocd/projects
         helm:
           valueFiles:
@@ -30,4 +30,4 @@ spec:
           prune: true
           selfHeal: true
         syncOptions:
-          - CreateNamespace=true 
+          - CreateNamespace=true
