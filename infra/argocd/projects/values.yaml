@@ -24,6 +24,21 @@ projects:
         kind: ClusterRole
       - group: rbac.authorization.k8s.io
         kind: ClusterRoleBinding
+      - group: monitoring.coreos.com
+        kind: '*'
+      - group: policy
+        kind: PodSecurityPolicy
+      - group: ""          # Add this for core API group (includes Namespace)
+        kind: Namespace    # Explicitly allow Namespace creation
+    namespaceResourceWhitelist:
+      - group: apps
+        kind: '*'
+      - group: ""         # Core API group
+        kind: '*'
+      - group: monitoring.coreos.com
+        kind: '*'
+      - group: networking.k8s.io
+        kind: '*'
 
   secrets:
     description: "Project for managing external secrets"
