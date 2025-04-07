@@ -18,6 +18,13 @@ kube-prometheus-stack:
 
 grafana:
   enabled: true
+  service:
+    port: 3001
+    targetPort: 3001
+  containerPort: 3001
+  persistence:
+    enabled: true
+    size: 10Gi
   datasources:
     datasources.yaml:
       apiVersion: 1
