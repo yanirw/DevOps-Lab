@@ -5,12 +5,12 @@ metadata:
   namespace: argocd
 spec:
   generators:
-  - list:
-      elements:
-      - clusterName: gcp-cluster
-        environment: dev
-        namespace: monitoring-test
-        gitRef: feat/monitoring
+    - list:
+        elements:
+          - clusterName: gcp-cluster
+            environment: dev
+            namespace: monitoring-test
+            gitRef: feat/monitoring
   template:
     metadata:
       labels:
@@ -23,16 +23,17 @@ spec:
         namespace: '{{namespace}}'
       revisionHistoryLimit: 0
       source:
+        repoURL: https://prometheus-community.github.io/helm-charts
+        chart: kube-prometheus-stack
+        targetRevision: 70.4.1
         helm:
           releaseName: monitoring
           valueFiles:
-          - env/{{environment}}-values.yaml
-        path: infra/monitoring
-        repoURL: 'https://github.com/yanirw/DevOps-Lab'
-        targetRevision: '{{gitRef}}'
+            - env/{{environment}}-values.yaml
       syncPolicy:
         automated:
           prune: true
           selfHeal: true
         syncOptions:
-        - CreateNamespace=true 
+          - CreateNamespace=true
+          - ServerSideApply=true 
