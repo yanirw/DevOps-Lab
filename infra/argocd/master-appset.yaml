@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: master-appset
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - environment: dev
+            clusterName: gcp-cluster
+    - list:
+        elements:
+          - name: applications
+            path: infra/argocd/applications
+          - name: monitoring
+            path: infra/argocd/monitoring
+          - name: config
+            path: infra/argocd/argo-config-appsets
+  template:
+    metadata:
+      name: app-of-apps-{{environment}}-{{name}}
+      namespace: argocd
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/yanirw/DevOps-Lab
+        targetRevision: HEAD
+        path: "{{path}}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: argocd
+      syncPolicy:
+        automated:
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+      dependsOn:
+        - name: bootstrap-{{environment}}-projects
+          namespace: argocd

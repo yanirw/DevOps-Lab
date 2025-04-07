@@ -31,5 +31,8 @@ spec:
         repoURL: 'https://github.com/yanirw/DevOps-Lab'
         targetRevision: '{{gitRef}}'
       syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
         syncOptions:
         - CreateNamespace=true

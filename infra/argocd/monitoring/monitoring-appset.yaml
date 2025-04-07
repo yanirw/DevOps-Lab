@@ -7,7 +7,7 @@ spec:
   generators:
     - list:
         elements:
-          - name: monitoring
+          - clusterName: gcp-cluster
             environment: dev
             namespace: monitoring
             gitRef: HEAD
