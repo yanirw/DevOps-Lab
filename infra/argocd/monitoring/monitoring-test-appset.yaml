@@ -23,13 +23,13 @@ spec:
         namespace: '{{namespace}}'
       revisionHistoryLimit: 0
       source:
-        repoURL: https://prometheus-community.github.io/helm-charts
-        chart: kube-prometheus-stack
-        targetRevision: 70.4.1
+        repoURL: 'https://github.com/yanirw/DevOps-Lab'
+        targetRevision: '{{gitRef}}'
+        path: infra/monitoring/kube-prometheus-stack
         helm:
           releaseName: monitoring
           valueFiles:
-            - env/{{environment}}-values.yaml
+            - ../env/{{environment}}-values.yaml
       syncPolicy:
         automated:
           prune: true
