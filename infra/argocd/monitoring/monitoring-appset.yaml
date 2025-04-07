@@ -1,38 +1,39 @@
-  apiVersion: argoproj.io/v1alpha1
-  kind: ApplicationSet
-  metadata:
-    name: monitoring-appset
-    namespace: argocd
-  spec:
-    generators:
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: monitoring-appset
+  namespace: argocd
+spec:
+  generators:
     - list:
         elements:
-        - clusterName: gcp-cluster
-          environment: dev
-          namespace: monitoring
-          gitRef: HEAD
-    template:
-      metadata:
-        labels:
-          domain: monitoring-umbrella
-        name: monitoring-{{environment}}
-      spec:
-        project: monitoring
-        destination:
-          name: '{{clusterName}}'
-          namespace: '{{namespace}}'
-        revisionHistoryLimit: 0
-        source:
-          helm:
-            releaseName: monitoring
-            valueFiles:
-            - env/{{environment}}-values.yaml
-          path: infra/monitoring
-          repoURL: 'https://github.com/yanirw/guitarnetes2.0'
-          targetRevision: '{{gitRef}}'
-        syncPolicy:
-          automated:
-            prune: true
-            selfHeal: true
-          syncOptions:
-          - CreateNamespace=true
+          - name: monitoring
+            environment: dev
+            namespace: monitoring
+            gitRef: HEAD
+  template:
+    metadata:
+      labels:
+        domain: monitoring-umbrella
+      name: monitoring-{{environment}}
+    spec:
+      project: monitoring
+      destination:
+        name: '{{clusterName}}'
+        namespace: '{{namespace}}'
+      revisionHistoryLimit: 0
+      source:
+        repoURL: 'https://github.com/yanirw/DevOps-Lab'
+        targetRevision: '{{gitRef}}'
+        path: infra/monitoring/kube-prometheus-stack
+        helm:
+          releaseName: monitoring
+          valueFiles:
+            - ../env/{{environment}}-values.yaml
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=true
+        - ServerSideApply=true

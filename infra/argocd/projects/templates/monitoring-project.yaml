@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: monitoring
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: {{ .Values.projects.monitoring.description }}
+  sourceRepos: {{ toYaml .Values.projects.monitoring.sourceRepos | nindent 4 }}
+  destinations: {{ toYaml .Values.projects.monitoring.destinations | nindent 4 }}
+  clusterResourceWhitelist: {{ toYaml .Values.projects.monitoring.clusterResourceWhitelist | nindent 4 }}
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*' 

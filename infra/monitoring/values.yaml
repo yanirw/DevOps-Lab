@@ -1,21 +1,200 @@
 env: {}
 
-prometheus:
-  serverFiles:
-    prometheus.yml:
-      scrape_configs:
-        - job_name: "echo-server"
-          kubernetes_sd_configs:
-            - role: endpoints
-          relabel_configs:
-            - source_labels: [__meta_kubernetes_service_name]
-              regex: umbrella-echo-server
-              action: keep
-            - source_labels: [__meta_kubernetes_endpoint_port_name]
-              regex: metrics
-              action: keep
-
-grafana:
-  # Default Grafana values
+kube-prometheus-stack:
   enabled: true
+  crds:
+    enabled: true
+  prometheusOperator:
+    createCustomResource: true
+    installCRDs: true
+  
+  # Common Labels
+  commonLabels:
+    app.kubernetes.io/part-of: monitoring
+    app.kubernetes.io/managed-by: helm
+
+  # Prometheus Configuration
+  prometheus:
+    enabled: true
+    prometheusSpec:
+      retention: 15d
+      storageSpec:
+        volumeClaimTemplate:
+          spec:
+            accessModes: ["ReadWriteOnce"]
+            resources:
+              requests:
+                storage: 50Gi
+      resources:
+        requests:
+          cpu: 500m
+          memory: 2Gi
+        limits:
+          cpu: 1000m
+          memory: 4Gi
+      readinessProbe:
+        httpGet:
+          path: /-/ready
+          port: 9090
+        initialDelaySeconds: 30
+        timeoutSeconds: 30
+      livenessProbe:
+        httpGet:
+          path: /-/healthy
+          port: 9090
+        initialDelaySeconds: 30
+        timeoutSeconds: 30
+      
+      # Default rules configuration
+      serviceMonitorSelector: {}
+      serviceMonitorNamespaceSelector: {}
+      serviceMonitorSelectorNilUsesHelmValues: false
+      
+      # Security context
+      securityContext:
+        fsGroup: 2000
+        runAsNonRoot: true
+        runAsUser: 1000
+
+  grafana:
+    enabled: true
+    persistence:
+      enabled: true
+      size: 10Gi
+      accessModes: ["ReadWriteOnce"]
+    adminPassword: "change-me-in-production"
+    
+    # Security
+    securityContext:
+      runAsUser: 472
+      runAsGroup: 472
+      fsGroup: 472
+    
+    # Probes
+    readinessProbe:
+      httpGet:
+        path: /api/health
+        port: 3000
+      initialDelaySeconds: 30
+      timeoutSeconds: 30
+    livenessProbe:
+      httpGet:
+        path: /api/health
+        port: 3000
+      initialDelaySeconds: 30
+      timeoutSeconds: 30
+    
+    # Resources
+    resources:
+      requests:
+        cpu: 200m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+    datasources:
+      datasources.yaml:
+        apiVersion: 1
+        datasources:
+        - name: Prometheus
+          type: prometheus
+          url: http://prometheus-operated:9090
+          access: proxy
+          isDefault: true
+    
+    dashboardProviders:
+      dashboardproviders.yaml:
+        apiVersion: 1
+        providers:
+        - name: 'default'
+          orgId: 1
+          folder: ''
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/default
+    
+    dashboards:
+      default:
+        kubernetes-cluster:
+          gnetId: 315
+          revision: 3
+          datasource: Prometheus
+        node-exporter:
+          gnetId: 1860
+          revision: 27
+          datasource: Prometheus
+        prometheus-stats:
+          gnetId: 2
+          revision: 2
+          datasource: Prometheus
+
+    admin:
+      existingSecret: "grafana-admin-credentials"
+      userKey: admin-user
+      passwordKey: admin-password
+
+  alertmanager:
+    enabled: true
+    config:
+      global:
+        resolve_timeout: 5m
+      route:
+        group_by: ['namespace', 'alertname']
+        group_wait: 30s
+        group_interval: 5m
+        repeat_interval: 12h
+        receiver: 'null'
+        routes:
+        - match:
+            alertname: Watchdog
+          receiver: 'null'
+      receivers:
+      - name: 'null'
+    persistence:
+      enabled: true
+      size: 10Gi
+
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+
+  # Default prometheus rules are included
+  defaultRules:
+    create: true
+    rules:
+      alertmanager: true
+      etcd: true
+      general: true
+      k8s: true
+      kubeApiserver: true
+      kubePrometheusNodeAlerting: true
+      kubePrometheusNodeRecording: true
+      kubernetesAbsent: true
+      kubernetesApps: true
+      kubernetesResources: true
+      kubernetesStorage: true
+      kubernetesSystem: true
+      kubeScheduler: true
+      network: true
+      node: true
+      prometheus: true
+      prometheusOperator: true
+      time: true
+
+prometheus-node-exporter:
+  enabled: true
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
 

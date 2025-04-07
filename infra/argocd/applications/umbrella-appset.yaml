@@ -28,7 +28,7 @@ spec:
           valueFiles:
           - env/values-{{environment}}.yaml
         path: infra/app-charts
-        repoURL: 'https://github.com/yanirw/guitarnetes2.0'
+        repoURL: 'https://github.com/yanirw/DevOps-Lab'
         targetRevision: '{{gitRef}}'
       syncPolicy:
         syncOptions:

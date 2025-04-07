@@ -1,4 +1,5 @@
-prometheus:
+kube-prometheus-stack:
+  version: 70.4.1  
   scrape_configs:
         - job_name: prometheus
           static_configs:
@@ -17,19 +18,6 @@ prometheus:
 
 grafana:
   enabled: true
-  datasources:
-    datasources.yaml:
-      apiVersion: 1
-      datasources:
-        - name: Prometheus
-          type: prometheus
-          url: http://monitoring-prometheus-server.monitoring.svc.cluster.local
-          access: proxy
-          isDefault: true
-          jsonData:
-            timeInterval: 30s
-            queryTimeout: "60s"
-  grafana:
   dashboards:
     default:
       echo-server-dashboard:
