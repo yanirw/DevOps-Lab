@@ -30,7 +30,6 @@ grafana:
           jsonData:
             timeInterval: 30s
             queryTimeout: "60s"
-  grafana:
   dashboards:
     default:
       echo-server-dashboard:
