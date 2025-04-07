@@ -28,18 +28,6 @@ grafana:
   livenessProbe:
     httpGet:
       port: 3001
-  datasources:
-    datasources.yaml:
-      apiVersion: 1
-      datasources:
-        - name: Prometheus
-          type: prometheus
-          url: http://monitoring-prometheus-server.monitoring-test.svc.cluster.local
-          access: proxy
-          isDefault: true
-          jsonData:
-            timeInterval: 30s
-            queryTimeout: "60s"
   dashboards:
     default:
       echo-server-dashboard:
