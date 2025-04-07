@@ -62,27 +62,71 @@ kube-prometheus-stack:
       enabled: true
       size: 10Gi
       accessModes: ["ReadWriteOnce"]
-    adminPassword: "change-me-in-production"
+      mountOptions:
+        - nobrl
+    
+    # Database Configuration
+    database:
+      type: sqlite3
+      path: /var/lib/grafana/grafana.db
+      max_idle_conn: 100
+      max_open_conn: 100
+      conn_max_lifetime: 14400
+    
+    # SQLite specific settings via environment variables
+    extraEnv:
+      - name: GF_DATABASE_TYPE
+        value: sqlite3
+      - name: GF_DATABASE_PATH
+        value: /var/lib/grafana/grafana.db
+      - name: GF_DATABASE_MAX_IDLE_CONN
+        value: "100"
+      - name: GF_DATABASE_MAX_OPEN_CONN
+        value: "100"
+      - name: GF_DATABASE_CONN_MAX_LIFETIME
+        value: "14400"
+      - name: GF_DATABASE_SQLITE_PRAGMA
+        value: "journal_mode=WAL,busy_timeout=500"
     
     # Security
     securityContext:
       runAsUser: 472
       runAsGroup: 472
       fsGroup: 472
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
     
-    # Probes
+    # Network Policies
+    networkPolicy:
+      enabled: true
+      ingress:
+        from:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: monitoring
+    
+    # Probes with adjusted timing
     readinessProbe:
       httpGet:
         path: /api/health
         port: 3000
-      initialDelaySeconds: 30
-      timeoutSeconds: 30
+      initialDelaySeconds: 60
+      timeoutSeconds: 10
+      periodSeconds: 10
+      successThreshold: 1
+      failureThreshold: 3
     livenessProbe:
       httpGet:
         path: /api/health
         port: 3000
-      initialDelaySeconds: 30
-      timeoutSeconds: 30
+      initialDelaySeconds: 60
+      timeoutSeconds: 10
+      periodSeconds: 10
+      successThreshold: 1
+      failureThreshold: 3
     
     # Resources
     resources:
