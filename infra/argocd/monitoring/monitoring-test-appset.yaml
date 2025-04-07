@@ -9,7 +9,7 @@ spec:
         elements:
           - clusterName: gcp-cluster
             environment: dev
-            namespace: monitoring-test
+            namespace: monitoring-test-2
             gitRef: feat/monitoring
   template:
     metadata:
