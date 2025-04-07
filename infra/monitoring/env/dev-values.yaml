@@ -1,4 +1,5 @@
-prometheus:
+kube-prometheus-stack:
+  version: 70.4.1  
   scrape_configs:
         - job_name: prometheus
           static_configs:

@@ -24,7 +24,7 @@ spec:
       revisionHistoryLimit: 0
       source:
         repoURL: 'https://github.com/yanirw/DevOps-Lab'
-        targetRevision: '{{gitRef}}'
+        targetRevision: feat/monitoring
         path: infra/monitoring/kube-prometheus-stack
         helm:
           releaseName: monitoring
