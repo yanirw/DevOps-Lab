@@ -4,12 +4,11 @@ kind: Ingress
 metadata:
   name: argocd-server-ingress
   namespace: {{ .Release.Namespace }}
-  {{- with .Values.ingress.annotations }}
   annotations:
+    {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
-  {{- end }}
+    {{- end }}
 spec:
-  ingressClassName: {{ .Values.ingress.className }}
   rules:
     {{- range .Values.ingress.hosts }}
     - host: {{ .host | quote }}
