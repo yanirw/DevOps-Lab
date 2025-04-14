@@ -5,12 +5,10 @@ metadata:
   namespace: argocd
 spec:
   generators:
-    - matrix:
-        generators:
-          - list:
-              elements:
-                - cluster: gcp-cluster
-                  environment: dev
+    - list:
+        elements:
+          - cluster: gcp-cluster
+            environment: dev
   template:
     metadata:
       name: 'bootstrap-{{environment}}'
