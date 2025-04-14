@@ -19,16 +19,16 @@ spec:
                   path: ingress
   template:
     metadata:
-      name: 'bootstrap-{{environment}}-{{name}}'
+      name: 'bootstrap-{{.environment}}-{{.name}}'
     spec:
       project: default
       source:
         repoURL: https://github.com/yanirw/DevOps-Lab
         targetRevision: HEAD
-        path: 'infra/argocd/bootstrap/{{path}}'
+        path: 'infra/argocd/bootstrap/{{.path}}'
         helm:
           valueFiles:
-            - 'env/values-{{environment}}.yaml'
+            - 'env/values-{{.environment}}.yaml'
       destination:
         server: https://kubernetes.default.svc
         namespace: argocd
