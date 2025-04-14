@@ -1,5 +1,5 @@
 apiVersion: v2
 name: projects
-description: ArgoCD Projects Configuration
+description: Projects configuration chart
 type: application
 version: 0.1.0 
