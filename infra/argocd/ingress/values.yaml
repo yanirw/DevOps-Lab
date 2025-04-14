@@ -1,0 +1,24 @@
+# Common configurations for all environments
+ingress:
+  enabled: true
+  className: "gce"
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.allow-http: "false"
+  tls: []
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+  annotations: {}
+
+backendConfig:
+  enabled: true
+  timeoutSec: 60
+  connectionDraining:
+    drainingTimeoutSec: 60
+
+frontendConfig:
+  enabled: true
+  sslPolicy: "modern" 

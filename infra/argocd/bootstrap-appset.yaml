@@ -13,6 +13,8 @@ spec:
         elements:
           - name: projects
             path: infra/argocd/projects
+          - name: ingress
+            path: infra/argocd/ingress
   template:
     metadata:
       name: bootstrap-{{environment}}-{{name}}
@@ -23,6 +25,11 @@ spec:
         repoURL: https://github.com/yanirw/DevOps-Lab
         targetRevision: HEAD
         path: "{{path}}"
+        {{- if eq .name "ingress" }}
+        helm:
+          valueFiles:
+            - env/values-{{environment}}.yaml
+        {{- end }}
       destination:
         server: https://kubernetes.default.svc
         namespace: argocd

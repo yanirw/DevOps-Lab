@@ -60,8 +60,9 @@ kube-prometheus-stack:
     enabled: true
     persistence:
       enabled: true
-      size: 10Gi
+      size: 20Gi
       accessModes: ["ReadWriteOnce"]
+      storageClassName: "standard"
       mountOptions:
         - nobrl
     
@@ -87,6 +88,12 @@ kube-prometheus-stack:
         value: "14400"
       - name: GF_DATABASE_SQLITE_PRAGMA
         value: "journal_mode=WAL,busy_timeout=500"
+      - name: GF_SERVER_ENABLE_GZIP
+        value: "true"
+      - name: GF_AUTH_ANONYMOUS_ENABLED
+        value: "false"
+      - name: GF_AUTH_BASIC_ENABLED
+        value: "true"
     
     # Security
     securityContext:
@@ -108,45 +115,58 @@ kube-prometheus-stack:
               matchLabels:
                 kubernetes.io/metadata.name: monitoring
     
-    # Probes with adjusted timing
+    # Enhanced resources
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+    
+    # Enhanced readiness and liveness probes
     readinessProbe:
       httpGet:
         path: /api/health
         port: 3000
-      initialDelaySeconds: 60
-      timeoutSeconds: 10
-      periodSeconds: 10
-      successThreshold: 1
-      failureThreshold: 3
+      initialDelaySeconds: 30
+      timeoutSeconds: 30
     livenessProbe:
       httpGet:
         path: /api/health
         port: 3000
-      initialDelaySeconds: 60
-      timeoutSeconds: 10
-      periodSeconds: 10
-      successThreshold: 1
-      failureThreshold: 3
+      initialDelaySeconds: 30
+      timeoutSeconds: 30
     
-    # Resources
-    resources:
-      requests:
-        cpu: 200m
-        memory: 256Mi
-      limits:
-        cpu: 500m
-        memory: 512Mi
-
-    datasources:
-      datasources.yaml:
-        apiVersion: 1
-        datasources:
-        - name: Prometheus
-          type: prometheus
-          url: http://prometheus-operated:9090
-          access: proxy
-          isDefault: true
+    # Service configuration
+    service:
+      type: ClusterIP
+      port: 3000
+      targetPort: 3000
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3000"
     
+    # GKE Ingress configuration
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: "gce"
+        kubernetes.io/ingress.global-static-ip-name: "grafana-static-ip"
+        networking.gke.io/managed-certificates: "grafana-cert"
+        kubernetes.io/ingress.allow-http: "false"
+      hosts:
+        - grafana.yanirw.com
+      tls: []
+    
+    # Managed Certificate configuration
+    managedCertificate:
+      enabled: true
+      name: grafana-cert
+      domains:
+        - grafana.yanirw.com
+    
+    # Dashboard provisioning
     dashboardProviders:
       dashboardproviders.yaml:
         apiVersion: 1
@@ -160,6 +180,7 @@ kube-prometheus-stack:
           options:
             path: /var/lib/grafana/dashboards/default
     
+    # Default dashboards
     dashboards:
       default:
         kubernetes-cluster:
@@ -175,6 +196,7 @@ kube-prometheus-stack:
           revision: 2
           datasource: Prometheus
 
+    # Admin configuration
     admin:
       existingSecret: "grafana-admin-credentials"
       userKey: admin-user
