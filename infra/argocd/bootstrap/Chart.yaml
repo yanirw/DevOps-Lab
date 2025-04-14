@@ -1,0 +1,12 @@
+apiVersion: v2
+name: bootstrap
+description: ArgoCD Bootstrap Umbrella Chart
+type: application
+version: 0.1.0
+dependencies:
+  - name: projects
+    version: 0.1.0
+    repository: file://./projects
+  - name: ingress
+    version: 0.1.0
+    repository: file://./ingress 

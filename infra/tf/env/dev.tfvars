@@ -13,5 +13,11 @@ static_ips = {
     description  = "Static IP for Grafana ingress"
     address_type = "EXTERNAL"
     ip_version   = "IPV4"
+  },
+  argocd = {
+    name         = "argocd-ip"
+    description  = "Static IP for ArgoCD ingress"
+    address_type = "EXTERNAL"
+    ip_version   = "IPV4"
   }
 }

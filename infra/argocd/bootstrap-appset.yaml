@@ -9,27 +9,20 @@ spec:
         generators:
           - list:
               elements:
-                - environment: dev
-                  clusterName: gcp-cluster
-          - list:
-              elements:
-                - name: projects
-                  path: infra/argocd/bootstrap/projects
-                - name: ingress
-                  path: infra/argocd/bootstrap/ingress
+                - cluster: gcp-cluster
+                  environment: dev
   template:
     metadata:
-      name: 'bootstrap-{{environment}}-{{name}}'
-      namespace: argocd
+      name: 'bootstrap-{{environment}}'
     spec:
       project: default
       source:
         repoURL: https://github.com/yanirw/DevOps-Lab
         targetRevision: HEAD
-        path: '{{path}}'
+        path: infra/argocd/bootstrap
         helm:
           valueFiles:
-            - '../env/{{environment}}-values.yaml'
+            - env/values-{{environment}}.yaml
       destination:
         server: https://kubernetes.default.svc
         namespace: argocd
@@ -38,5 +31,4 @@ spec:
           prune: true
           selfHeal: true
         syncOptions:
-          - CreateNamespace=true
-          - PruneLast=true 
+          - CreateNamespace=true 
