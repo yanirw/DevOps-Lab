@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: bootstrap-appset
+  namespace: argocd
+spec:
+  generators:
+    - matrix:
+        generators:
+          - list:
+              elements:
+                - environment: dev
+                  clusterName: gcp-cluster
+          - list:
+              elements:
+                - name: projects
+                  path: infra/argocd/bootstrap/projects
+                - name: ingress
+                  path: infra/argocd/bootstrap/ingress
+  template:
+    metadata:
+      name: 'bootstrap-{{environment}}-{{name}}'
+      namespace: argocd
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/yanirw/DevOps-Lab
+        targetRevision: HEAD
+        path: '{{path}}'
+        helm:
+          valueFiles:
+            - '../env/{{environment}}-values.yaml'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: argocd
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - PruneLast=true 

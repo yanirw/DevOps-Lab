@@ -1,0 +1,67 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argocd-server-ingress
+  namespace: {{ .Release.Namespace }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  rules:
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: argocd-server
+                port:
+                  number: {{ $.Values.service.port }}
+          {{- end }}
+    {{- end }}
+  {{- with .Values.ingress.tls }}
+  tls:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
+
+{{- if .Values.managedCertificate.enabled }}
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: {{ .Values.managedCertificate.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  domains:
+    {{- range .Values.managedCertificate.domains }}
+    - {{ . | quote }}
+    {{- end }}
+{{- end }}
+
+{{- if .Values.backendConfig.enabled }}
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: {{ .Values.backendConfig.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  timeoutSec: {{ .Values.backendConfig.timeoutSec }}
+  connectionDraining:
+    drainingTimeoutSec: {{ .Values.backendConfig.connectionDraining.drainingTimeoutSec }}
+{{- end }}
+
+{{- if .Values.frontendConfig.enabled }}
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: {{ .Values.frontendConfig.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  sslPolicy: {{ .Values.frontendConfig.sslPolicy }}
+{{- end }} 

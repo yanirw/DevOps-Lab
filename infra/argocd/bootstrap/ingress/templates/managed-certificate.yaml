@@ -6,5 +6,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   domains:
-    {{- toYaml .Values.managedCertificate.domains | nindent 4 }}
+    {{- range .Values.managedCertificate.domains }}
+    - {{ . | quote }}
+    {{- end }}
 {{- end }} 

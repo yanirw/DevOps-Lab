@@ -1,11 +1,15 @@
-# Common configurations for all environments
+# Default values for ingress
 ingress:
-  enabled: true
-  className: "gce"
-  annotations:
-    kubernetes.io/ingress.class: "gce"
-    kubernetes.io/ingress.allow-http: "false"
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts: []
   tls: []
+
+managedCertificate:
+  enabled: false
+  name: ""
+  domains: []
 
 service:
   type: ClusterIP
@@ -14,11 +18,13 @@ service:
   annotations: {}
 
 backendConfig:
-  enabled: true
+  enabled: false
+  name: ""
   timeoutSec: 60
   connectionDraining:
     drainingTimeoutSec: 60
 
 frontendConfig:
-  enabled: true
+  enabled: false
+  name: ""
   sslPolicy: "modern" 
