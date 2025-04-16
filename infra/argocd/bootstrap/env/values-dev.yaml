@@ -32,24 +32,22 @@ projects:
             - '*'
 
 ingress:
-  ingress:
-    enabled: true
-    hostname: argo-dev.yanirw.com
-    annotations:
-      kubernetes.io/ingress.class: gce
-      kubernetes.io/ingress.global-static-ip-name: argocd-ip
-      networking.gke.io/v1beta1.FrontendConfig: argocd-frontend-config
-    tls:
-      secretName: cloudflare-tls-dev
-    hosts:
-      - host: argo-dev.yanirw.com
-        paths:
-          - path: /
-            pathType: Prefix
-  
-  service:
-    port: 80
-    annotations:
-      cloud.google.com/neg: '{"ingress": true}'
-      cloud.google.com/backend-config: '{"ports": {"http":"argocd-backend-config"}}'
+  hostname: argo-dev.yanirw.com
+  tls:
+    secretName: cloudflare-tls
+  annotations:
+    kubernetes.io/ingress.class: gce
+    kubernetes.io/ingress.global-static-ip-name: argocd-ip
+    networking.gke.io/v1beta1.FrontendConfig: argocd-frontend-config
+  hosts:
+    - host: argo-dev.yanirw.com
+      paths:
+        - path: /
+          pathType: Prefix
+
+service:
+  port: 80
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+    cloud.google.com/backend-config: '{"ports": {"http":"argocd-backend-config"}}'
 
