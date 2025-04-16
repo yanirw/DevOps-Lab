@@ -45,6 +45,8 @@ projects:
           kind: Role
         - group: rbac.authorization.k8s.io
           kind: RoleBinding
+        - group: batch
+          kind: Job
       orphanedResources:
         warn: true
       syncWindows:
