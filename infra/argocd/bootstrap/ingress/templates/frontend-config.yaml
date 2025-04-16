@@ -1,9 +1,0 @@
-{{- if .Values.frontendConfig.enabled }}
-apiVersion: networking.gke.io/v1beta1
-kind: FrontendConfig
-metadata:
-  name: {{ .Values.frontendConfig.name }}
-  namespace: {{ .Release.Namespace }}
-spec:
-  sslPolicy: {{ .Values.frontendConfig.sslPolicy }}
-{{- end }} 

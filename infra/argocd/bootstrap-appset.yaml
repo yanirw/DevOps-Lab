@@ -38,6 +38,15 @@ spec:
           selfHeal: true
         syncOptions:
           - CreateNamespace=true
+      ignoreDifferences:
+        - group: cloud.google.com
+          kind: BackendConfig
+          name: argocd-backend-config
+          namespace: argocd
+        - group: networking.gke.io
+          kind: ManagedCertificate
+          name: argocd-cert
+          namespace: argocd
   goTemplate: true
   goTemplateOptions:
     - missingkey=zero 

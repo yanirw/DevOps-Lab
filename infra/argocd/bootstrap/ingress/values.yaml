@@ -1,30 +1,12 @@
-# Default values for ingress
 ingress:
-  enabled: false
-  className: ""
-  annotations: {}
-  hosts: []
-  tls: []
-
-managedCertificate:
-  enabled: false
-  name: ""
-  domains: []
+  hostname: argo.yanirw.com
+  tls:
+    secretName: cloudflare-tls
+  annotations:
+    networking.gke.io/v1beta1.FrontendConfig: argocd-frontend-config
 
 service:
-  type: ClusterIP
   port: 80
-  targetPort: 8080
-  annotations: {}
-
-backendConfig:
-  enabled: false
-  name: ""
-  timeoutSec: 60
-  connectionDraining:
-    drainingTimeoutSec: 60
-
-frontendConfig:
-  enabled: false
-  name: ""
-  sslPolicy: "modern" 
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+    cloud.google.com/backend-config: '{"ports": {"http":"argocd-backend-config"}}' 
