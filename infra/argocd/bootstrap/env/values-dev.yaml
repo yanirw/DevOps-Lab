@@ -20,6 +20,8 @@ projects:
           kind: '*'
         - group: networking.k8s.io
           kind: '*'
+        - group: networking.gke.io
+          kind: '*'
         - group: rbac.authorization.k8s.io
           kind: Role
         - group: rbac.authorization.k8s.io
