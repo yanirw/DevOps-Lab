@@ -6,9 +6,9 @@ metadata:
 spec:
   healthCheck:
     checkIntervalSec: 30
-    timeoutSec: 10
+    timeoutSec: 5
     healthyThreshold: 1
-    unhealthyThreshold: 3
+    unhealthyThreshold: 2
     type: HTTP
     requestPath: /healthz
-    port: 80
+    port: 8080
