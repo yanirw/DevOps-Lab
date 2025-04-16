@@ -2,15 +2,34 @@ projects:
   enabled: true
   config:
     - name: monitoring
-      description: Monitoring project
+      description: Monitoring project for Prometheus and Grafana stack
       sourceRepos:
         - https://github.com/yanirw/DevOps-Lab
+        - https://prometheus-community.github.io/helm-charts
       destinations:
         - server: https://kubernetes.default.svc
           namespace: monitoring
+        - server: https://kubernetes.default.svc
+          namespace: monitoring-test
+        - server: https://kubernetes.default.svc
+          namespace: '*'
       clusterResourceWhitelist:
-        - group: '*'
+        - group: apiextensions.k8s.io
+          kind: CustomResourceDefinition
+        - group: admissionregistration.k8s.io
+          kind: ValidatingWebhookConfiguration
+        - group: admissionregistration.k8s.io
+          kind: MutatingWebhookConfiguration
+        - group: rbac.authorization.k8s.io
+          kind: ClusterRole
+        - group: rbac.authorization.k8s.io
+          kind: ClusterRoleBinding
+        - group: monitoring.coreos.com
           kind: '*'
+        - group: policy
+          kind: PodSecurityPolicy
+        - group: ""
+          kind: Namespace
       namespaceResourceWhitelist:
         - group: apps
           kind: '*'
