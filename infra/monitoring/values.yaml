@@ -152,9 +152,10 @@ kube-prometheus-stack:
       enabled: true
       annotations:
         kubernetes.io/ingress.class: "gce"
-        kubernetes.io/ingress.global-static-ip-name: "grafana-static-ip"
-        networking.gke.io/managed-certificates: "grafana-cert"
+        networking.gke.io/v1beta1.frontendConfig: "grafana-frontend-config"
+        kubernetes.io/ingress.global-static-ip-name: "grafana-ip"
         kubernetes.io/ingress.allow-http: "false"
+        networking.gke.io/managed-certificates: "grafana-cert"
       hosts:
         - grafana.yanirw.com
       tls: []

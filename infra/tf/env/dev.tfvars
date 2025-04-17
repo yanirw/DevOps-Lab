@@ -9,7 +9,7 @@ gke_num_nodes = 1
 # Static IP Configuration
 static_ips = {
   grafana = {
-    name         = "grafana-static-ip"
+    name         = "grafana-ip"
     description  = "Static IP for Grafana ingress"
     address_type = "EXTERNAL"
     ip_version   = "IPV4"
