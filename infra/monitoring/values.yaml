@@ -155,17 +155,16 @@ kube-prometheus-stack:
         networking.gke.io/v1beta1.frontendConfig: "grafana-frontend-config"
         kubernetes.io/ingress.global-static-ip-name: "grafana-ip"
         kubernetes.io/ingress.allow-http: "false"
-        networking.gke.io/managed-certificates: "grafana-cert"
       hosts:
         - grafana.yanirw.com
-      tls: []
+      tls:
+        - secretName: cloudflare-tls
+          hosts:
+            - grafana.yanirw.com
     
-    # Managed Certificate configuration
+    # We're not using ManagedCertificate anymore
     managedCertificate:
-      enabled: true
-      name: grafana-cert
-      domains:
-        - grafana.yanirw.com
+      enabled: false
     
     # Dashboard provisioning
     dashboardProviders:
