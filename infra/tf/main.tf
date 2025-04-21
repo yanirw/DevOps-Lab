@@ -21,3 +21,13 @@ module "GKE" {
   gke_num_nodes     = var.gke_num_nodes
 }
 
+# Static IPs
+module "static_ips" {
+  source = "./modules/static_ip"
+  for_each = var.static_ips
+
+  name         = each.value.name
+  description  = each.value.description
+  address_type = each.value.address_type
+  ip_version   = each.value.ip_version
+}

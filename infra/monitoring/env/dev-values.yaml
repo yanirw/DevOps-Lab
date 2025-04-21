@@ -18,6 +18,21 @@ kube-prometheus-stack:
 
 grafana:
   enabled: true
+  adminPassword: prom-operator
+  ingress:
+    enabled: true
+    ingressClassName: "gce"
+    annotations:
+      kubernetes.io/ingress.class: "gce"
+      networking.gke.io/v1beta1.frontendConfig: "grafana-frontend-config"
+      kubernetes.io/ingress.global-static-ip-name: "grafana-ip"
+      kubernetes.io/ingress.allow-http: "false"  # Force HTTPS
+    hosts:
+      - grafana.yanirw.com
+    tls:
+      - secretName: cloudflare-tls
+        hosts:
+          - grafana.yanirw.com
   dashboards:
     default:
       echo-server-dashboard:

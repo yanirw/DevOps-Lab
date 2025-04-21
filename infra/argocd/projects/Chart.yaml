@@ -1,5 +1,0 @@
-apiVersion: v2
-name: argocd-projects
-description: ArgoCD Projects Configuration
-type: application
-version: 0.1.0 

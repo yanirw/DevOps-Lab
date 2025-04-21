@@ -4,12 +4,12 @@ metadata:
   name: argocd
   namespace: argocd
   annotations:
-    networking.gke.io/v1beta1.FrontendConfig: argocd-frontend-config
+    {{- toYaml .Values.ingress.annotations | nindent 4 }}
 spec:
   tls:
-    - secretName: cloudflare-tls
+    - secretName: {{ .Values.ingress.tls.secretName }}
   rules:
-    - host: argo.yanirw.com
+    - host: {{ .Values.ingress.hostname }}
       http:
         paths:
         - pathType: Prefix

@@ -10,6 +10,4 @@ spec:
   sourceRepos: {{ toYaml .Values.projects.monitoring.sourceRepos | nindent 4 }}
   destinations: {{ toYaml .Values.projects.monitoring.destinations | nindent 4 }}
   clusterResourceWhitelist: {{ toYaml .Values.projects.monitoring.clusterResourceWhitelist | nindent 4 }}
-  namespaceResourceWhitelist:
-    - group: '*'
-      kind: '*' 
+  namespaceResourceWhitelist: {{ toYaml .Values.projects.monitoring.namespaceResourceWhitelist | nindent 4 }} 

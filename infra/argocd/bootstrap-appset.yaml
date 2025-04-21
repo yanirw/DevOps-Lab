@@ -5,29 +5,48 @@ metadata:
   namespace: argocd
 spec:
   generators:
-    - list:
-        elements:
-          - environment: dev
-            clusterName: gcp-cluster
-    - list:
-        elements:
-          - name: projects
-            path: infra/argocd/projects
+    - matrix:
+        generators:
+          - list:
+              elements:
+                - cluster: gcp-cluster
+                  environment: dev
+          - list:
+              elements:
+                - name: projects
+                  path: projects
+                - name: ingress
+                  path: ingress
   template:
     metadata:
-      name: bootstrap-{{environment}}-{{name}}
-      namespace: argocd
+      name: 'bootstrap-{{.environment}}-{{.name}}'
     spec:
       project: default
       source:
         repoURL: https://github.com/yanirw/DevOps-Lab
         targetRevision: HEAD
-        path: "{{path}}"
+        path: 'infra/argocd/bootstrap/{{.path}}'
+        helm:
+          valueFiles:
+            - '../env/values-{{.environment}}.yaml'
       destination:
         server: https://kubernetes.default.svc
         namespace: argocd
       syncPolicy:
         automated:
           prune: true
+          selfHeal: true
         syncOptions:
-          - CreateNamespace=true 
+          - CreateNamespace=true
+      ignoreDifferences:
+        - group: cloud.google.com
+          kind: BackendConfig
+          name: argocd-backend-config
+          namespace: argocd
+        - group: networking.gke.io
+          kind: ManagedCertificate
+          name: argocd-cert
+          namespace: argocd
+  goTemplate: true
+  goTemplateOptions:
+    - missingkey=zero 

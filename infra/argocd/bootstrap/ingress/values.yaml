@@ -1,0 +1,6 @@
+ingress:
+  hostname: argo.yanirw.com
+  tls:
+    secretName: cloudflare-tls
+  annotations:
+    networking.gke.io/v1beta1.FrontendConfig: argocd-frontend-config

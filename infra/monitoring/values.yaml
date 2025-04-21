@@ -60,17 +60,71 @@ kube-prometheus-stack:
     enabled: true
     persistence:
       enabled: true
-      size: 10Gi
+      size: 20Gi
       accessModes: ["ReadWriteOnce"]
-    adminPassword: "change-me-in-production"
+      storageClassName: "standard"
+      mountOptions:
+        - nobrl
+    
+    # Database Configuration
+    database:
+      type: sqlite3
+      path: /var/lib/grafana/grafana.db
+      max_idle_conn: 100
+      max_open_conn: 100
+      conn_max_lifetime: 14400
+    
+    # SQLite specific settings via environment variables
+    extraEnv:
+      - name: GF_DATABASE_TYPE
+        value: sqlite3
+      - name: GF_DATABASE_PATH
+        value: /var/lib/grafana/grafana.db
+      - name: GF_DATABASE_MAX_IDLE_CONN
+        value: "100"
+      - name: GF_DATABASE_MAX_OPEN_CONN
+        value: "100"
+      - name: GF_DATABASE_CONN_MAX_LIFETIME
+        value: "14400"
+      - name: GF_DATABASE_SQLITE_PRAGMA
+        value: "journal_mode=WAL,busy_timeout=500"
+      - name: GF_SERVER_ENABLE_GZIP
+        value: "true"
+      - name: GF_AUTH_ANONYMOUS_ENABLED
+        value: "false"
+      - name: GF_AUTH_BASIC_ENABLED
+        value: "true"
     
     # Security
     securityContext:
       runAsUser: 472
       runAsGroup: 472
       fsGroup: 472
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
     
-    # Probes
+    # Network Policies
+    networkPolicy:
+      enabled: true
+      ingress:
+        from:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: monitoring
+    
+    # Enhanced resources
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+    
+    # Enhanced readiness and liveness probes
     readinessProbe:
       httpGet:
         path: /api/health
@@ -84,25 +138,35 @@ kube-prometheus-stack:
       initialDelaySeconds: 30
       timeoutSeconds: 30
     
-    # Resources
-    resources:
-      requests:
-        cpu: 200m
-        memory: 256Mi
-      limits:
-        cpu: 500m
-        memory: 512Mi
-
-    datasources:
-      datasources.yaml:
-        apiVersion: 1
-        datasources:
-        - name: Prometheus
-          type: prometheus
-          url: http://prometheus-operated:9090
-          access: proxy
-          isDefault: true
+    # Service configuration
+    service:
+      type: ClusterIP
+      port: 3000
+      targetPort: 3000
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3000"
     
+    # GKE Ingress configuration
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: "gce"
+        networking.gke.io/v1beta1.frontendConfig: "grafana-frontend-config"
+        kubernetes.io/ingress.global-static-ip-name: "grafana-ip"
+        kubernetes.io/ingress.allow-http: "false"
+      hosts:
+        - grafana.yanirw.com
+      tls:
+        - secretName: cloudflare-tls
+          hosts:
+            - grafana.yanirw.com
+    
+    # We're not using ManagedCertificate anymore
+    managedCertificate:
+      enabled: false
+    
+    # Dashboard provisioning
     dashboardProviders:
       dashboardproviders.yaml:
         apiVersion: 1
@@ -116,6 +180,7 @@ kube-prometheus-stack:
           options:
             path: /var/lib/grafana/dashboards/default
     
+    # Default dashboards
     dashboards:
       default:
         kubernetes-cluster:
@@ -131,6 +196,7 @@ kube-prometheus-stack:
           revision: 2
           datasource: Prometheus
 
+    # Admin configuration
     admin:
       existingSecret: "grafana-admin-credentials"
       userKey: admin-user
